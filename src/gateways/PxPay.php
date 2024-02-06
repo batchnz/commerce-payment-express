@@ -172,6 +172,15 @@ class PxPay extends OffsiteGateway
 
         $request['transactionId'] = $shortenedHash;
 
+        // Ensure the returnUrl and cancelUrl are decoded and do not contain HTML entities
+        if (isset($request['returnUrl'])) {
+            $request['returnUrl'] = html_entity_decode($request['returnUrl']);
+        }
+
+        if (isset($request['cancelUrl'])) {
+            $request['cancelUrl'] = html_entity_decode($request['cancelUrl']);
+        }
+
         return $request;
 
     }
