@@ -30,7 +30,7 @@
   "require": {
     "craftcms/cms": "^4.0.0",
     "craftcms/commerce-omnipay": "^4.0.0",
-    "omnipay/paymentexpress": "v3.0.1"
+    "omnipay/paymentexpress": "v3.1.1"
   },
   "autoload": {
     "psr-4": {
