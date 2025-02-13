@@ -109,7 +109,7 @@ class PxPay extends OffsiteGateway
     {
         /** @var Gateway $gateway */
         $gateway = $this->getGateway();
-        $gateway->setTestMode($this->testMode);
+        $gateway->setTestMode((bool) $this->testMode);
 
         $event = new CreateGatewayEvent([
             'gateway' => $gateway
