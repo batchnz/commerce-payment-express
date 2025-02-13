@@ -136,6 +136,7 @@ class PxPay extends OffsiteGateway
             $password = App::parseEnv($this->pxPostPassword);
         }
 
+        /** @var PxPayGateway | PxPostGateway $gateway */
         $gateway = Omnipay::create($gatewayName);
         $gateway->setUsername($username);
         $gateway->setPassword($password);
