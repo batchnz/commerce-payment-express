@@ -124,16 +124,16 @@ class PxPay extends OffsiteGateway
     protected function getGateway()
     {
         $gatewayName = '\\'.PxPayGateway::class;
-        $username = Craft::parseEnv($this->username);
-        $password = Craft::parseEnv($this->password);
+        $username = App::parseEnv($this->username);
+        $password = App::parseEnv($this->password);
 
         // swap the gateway to PxPost if running a refund
         $actionSegments = Craft::$app->getRequest()->actionSegments;
         $action = array_pop($actionSegments);
         if ($action === 'transaction-refund') {
             $gatewayName = '\\'.PxPostGateway::class;
-            $username = Craft::parseEnv($this->pxPostUsername);
-            $password = Craft::parseEnv($this->pxPostPassword);
+            $username = App::parseEnv($this->pxPostUsername);
+            $password = App::parseEnv($this->pxPostPassword);
         }
 
         $gateway = Omnipay::create($gatewayName);
