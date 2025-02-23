@@ -29,7 +29,7 @@
   },
   "require": {
     "craftcms/cms": "^5.0.0",
-    "craftcms/commerce-omnipay": "^5.0.0",
+    "craftcms/commerce-omnipay": "^4.0.0",
     "omnipay/paymentexpress": "v3.1.1"
   },
   "autoload": {
