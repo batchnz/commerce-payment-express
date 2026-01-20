@@ -5,6 +5,7 @@ namespace platocreative\paymentexpress\gateways;
 use craft\helpers\App;
 use platocreative\paymentexpress\models\RequestResponse;
 use platocreative\paymentexpress\events\CreateGatewayEvent;
+use platocreative\paymentexpress\omnipay\PxPayGateway;
 
 
 use Craft;
@@ -15,7 +16,6 @@ use craft\commerce\omnipay\base\OffsiteGateway;
 use Omnipay\Common\AbstractGateway;
 use Omnipay\Common\Message\ResponseInterface;
 use Omnipay\Omnipay;
-use Omnipay\PaymentExpress\PxPayGateway;
 use Omnipay\PaymentExpress\PxPostGateway;
 use yii\base\NotSupportedException;
 
@@ -123,7 +123,7 @@ class PxPay extends OffsiteGateway
 
     protected function getGateway()
     {
-        $gatewayName = '\\'.PxPayGateway::class;
+        $gatewayName = '\\' . PxPayGateway::class;
         $username = App::parseEnv($this->username);
         $password = App::parseEnv($this->password);
 
@@ -131,7 +131,7 @@ class PxPay extends OffsiteGateway
         $actionSegments = Craft::$app->getRequest()->actionSegments;
         $action = array_pop($actionSegments);
         if ($action === 'transaction-refund') {
-            $gatewayName = '\\'.PxPostGateway::class;
+            $gatewayName = '\\' . PxPostGateway::class;
             $username = App::parseEnv($this->pxPostUsername);
             $password = App::parseEnv($this->pxPostPassword);
         }
@@ -152,10 +152,10 @@ class PxPay extends OffsiteGateway
         // swap the gateway to PxPost if running a refund
         $requestBody = Craft::$app->getRequest()->bodyParams;
         if (isset($requestBody['action']) && strpos($requestBody['action'], 'transaction-refund')) {
-            return '\\'.PxPostGateway::class;
+            return '\\' . PxPostGateway::class;
         }
 
-        return '\\'.PxPayGateway::class;
+        return '\\' . PxPayGateway::class;
     }
 
     /**
@@ -165,7 +165,7 @@ class PxPay extends OffsiteGateway
     {
         $request = parent::createPaymentRequest($transaction, $card, $itemBag);
 
-        if(strlen($transaction->hash) > 16) {
+        if (strlen($transaction->hash) > 16) {
             $shortenedHash = substr($transaction->hash, 0, 16);
         } else {
             $shortenedHash = $transaction->hash;
@@ -182,8 +182,13 @@ class PxPay extends OffsiteGateway
             $request['cancelUrl'] = html_entity_decode($request['cancelUrl']);
         }
 
-        return $request;
+        // Add emailAddress for 3D Secure (required by Visa as of Feb 2026)
+        $order = $transaction->getOrder();
+        if ($order && $order->email) {
+            $request['emailAddress'] = $order->email;
+        }
 
+        return $request;
     }
 
     /**
@@ -193,6 +198,4 @@ class PxPay extends OffsiteGateway
     {
         return new RequestResponse($response, $transaction);
     }
-
-
 }
