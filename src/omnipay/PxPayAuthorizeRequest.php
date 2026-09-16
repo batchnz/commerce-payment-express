@@ -53,4 +53,22 @@ class PxPayAuthorizeRequest extends BasePxPayAuthorizeRequest
 
         return $data;
     }
+
+    /**
+     * Return the raw returnUrl parameter.
+     *
+     * The upstream omnipay PxPayAuthorizeRequest::getReturnUrl() runs the URL through
+     * htmlentities(), but getData() then assigns it to a SimpleXMLElement, which escapes
+     * it a second time. Windcave therefore stores our UrlSuccess with a double-encoded
+     * ampersand ("...&amp;amp;commerceTransactionHash=..."), and its server-side FPRN
+     * callbacks arrive with a mangled query string that Craft Commerce cannot parse,
+     * causing the payment to go unrecorded. SimpleXML alone provides the single level of
+     * XML escaping Windcave requires, so the returnUrl must be passed through raw.
+     *
+     * @return mixed
+     */
+    public function getReturnUrl()
+    {
+        return $this->getParameter('returnUrl');
+    }
 }
